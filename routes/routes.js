@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/users');
 const multer = require('multer');
 const users = require('../models/users');
+const fs = require('fs');
 
 //image upload
 const storage = multer.diskStorage({
@@ -86,4 +87,49 @@ router.get('/edit/:id', async (req, res) => {
         res.redirect('/');
     }
 });
+
+//update user route
+router.post("/update/:id", upload, async (req, res) => {
+    try {
+        let id = req.params.id;
+        let new_image = '';
+
+        if (req.file) {
+            new_image = req.file.filename;
+            try {
+                fs.unlinkSync("./uploads/" + req.body.old_image);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            new_image = req.body.old_image;
+        }
+
+        const result = await User.findByIdAndUpdate(id, {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            image: new_image,
+        });
+
+        if (!result) {
+            res.json({ message: 'User not found', type: 'danger' });
+            return;
+        }
+
+        req.session.message = {
+            type: 'success',
+            message: 'User updated successfully!',
+        };
+        res.redirect('/');
+    } catch (err) {
+        res.json({ message: err.message, type: 'danger' });
+    }
+});
+
+// delete user route
+router.get('/delete/:id', (req,res)=>{
+    let id = req.params.id;
+        
+})
 module.exports = router;
