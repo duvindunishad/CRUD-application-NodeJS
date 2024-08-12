@@ -14,7 +14,7 @@ db.on("error", (error) => console.log(error));
 db.once("open", ()=> console.log("Connected to the database"));
 
 //middlewares
-app.use(express.urlencoded({extends: false}));
+app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 app.use(session({
