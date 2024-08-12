@@ -66,4 +66,24 @@ router.get("/add", (req,res)=>{
     res.render("add_users", {title: 'Add users'});
 });
 
+
+//edit an user
+router.get('/edit/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id);
+        
+        if (user == null) {
+            res.redirect('/');
+        } else {
+            res.render("edit_users", {
+                title: 'Edit user',
+                user: user,
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.redirect('/');
+    }
+});
 module.exports = router;
