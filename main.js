@@ -13,11 +13,27 @@ const db = mongoose.connection;
 db.on("error", (error) => console.log(error));
 db.once("open", ()=> console.log("Connected to the database"));
 
+//middlewares
+app.use(express.urlencoded({extends: false}));
+app.use(express.json());
 
+app.use(session({
+    secret: "my secret kry",
+    saveUninitialized: true,
+    resave: false,
+}));
 
-app.get("/", (req,res)=>{
-    res.send("Hello world");
+app.use((req,res,next)=>{
+    res.locals.message = req.session.message;
+    delete req.session.message;
+    next();
 });
+
+//set template engine
+app.set("view engine", "ejs");
+
+//route prefix
+app.use("", require("./routes/routes"))
 
 app.listen(PORT, ()=>{
     console.log(`Server started at http://localhost:${PORT}`);
