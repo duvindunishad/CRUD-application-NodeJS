@@ -43,9 +43,18 @@ router.post('/add', upload, async (req, res)=>{
 });
 
 //get all users
-router.get("/", (req,res)=>{
-    User.find().exec((err, users))
+router.get("/", async (req, res) => {
+    try {
+        const users = await User.find().exec();
+        res.render('index', {
+            title: 'Home Page',
+            users: users,
+        });
+    } catch (err) {
+        res.json({ message: err.message });
+    }
 });
+
 
 
 
